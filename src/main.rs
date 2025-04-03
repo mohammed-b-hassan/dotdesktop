@@ -1,5 +1,9 @@
 use clap::Parser;
-use std::{fs::File, io::Write};
+use std::{
+    fs::File,
+    io::{Write, stdin},
+    process::exit,
+};
 
 const DEFAULT_NAME: &str = "app";
 const DEFAULT_EXECUTABLE: &str = "";
@@ -47,20 +51,45 @@ fn main() {
     let file_path = format!("{}{}.desktop", path, args.name.replace(" ", "-"));
 
     if !args.yes_all {
-        let mut file = File::create(&file_path).unwrap();
-        let content = format!(
-            "[Desktop Entry]\nType={}\nName={}\nMimeType={}\nExec={}\nNoDisplay={}\nStartupNotify={}\nIcon={}\nTerminal={}",
-            args.bin_type,
-            args.name,
-            args.mime_type,
-            args.exec,
-            args.no_display,
-            args.startup_notify,
-            args.icon,
-            args.terminal
-        );
+        println!("Name: {}", args.name);
+        println!("Executable: {}", args.exec);
+        println!("Type: {}", args.bin_type);
+        println!("Mime type: {}", args.mime_type);
+        println!("Icon: {}", args.icon);
+        println!("No display: {}", args.no_display);
+        println!("Startup notify: {}", args.startup_notify);
+        println!("Terminal: {}", args.terminal);
+        println!("Path: {}", path);
+        println!("File will be saved to: {}", file_path);
+        println!("File name: {}.desktop", args.name.replace(" ", "-"));
+        println!("Do you want to save the above? Yes/No");
+        let mut confirm = String::new();
+        let _ = stdin()
+            .read_line(&mut confirm)
+            .expect("Failed to parse your answer");
 
-        let _ = file.write_all(content.as_bytes()).unwrap();
+        if confirm.len() > 0 && confirm.trim().to_lowercase() == "yes"
+            || confirm.len() > 0 && confirm.trim().to_lowercase() == "y"
+        {
+            let mut file = File::create(&file_path).unwrap();
+            let content = format!(
+                "[Desktop Entry]\nType={}\nName={}\nMimeType={}\nExec={}\nNoDisplay={}\nStartupNotify={}\nIcon={}\nTerminal={}",
+                args.bin_type,
+                args.name,
+                args.mime_type,
+                args.exec,
+                args.no_display,
+                args.startup_notify,
+                args.icon,
+                args.terminal
+            );
+
+            let _ = file.write_all(content.as_bytes()).unwrap();
+            println!("Done! Path to file: {}", file_path);
+        } else {
+            println!("Canceling!");
+            exit(1)
+        }
     } else {
         let mut file = File::create(&file_path).unwrap();
         let content = format!(
@@ -76,15 +105,6 @@ fn main() {
         );
 
         let _ = file.write_all(content.as_bytes()).unwrap();
+        println!("Done! Path to file: {}", file_path);
     }
-
-    println!("Name: {}", args.name);
-    println!("Executable: {}", args.exec);
-    println!("Type: {}", args.bin_type);
-    println!("Mime type: {}", args.mime_type);
-    println!("Path: {}", path);
-    println!("Icon: {}", args.icon);
-    println!("No display: {}", args.no_display);
-    println!("Startup notify: {}", args.startup_notify);
-    println!("File saved to: {}", file_path)
 }
