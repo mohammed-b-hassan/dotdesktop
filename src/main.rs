@@ -1,5 +1,5 @@
 use clap::Parser;
-use std::{fs::File, io::Write, path::Path};
+use std::{fs::File, io::Write};
 
 const DEFAULT_NAME: &str = "app";
 const DEFAULT_EXECUTABLE: &str = "";
@@ -44,11 +44,7 @@ fn main() {
     } else {
         String::from(&args.path)
     };
-    let file_path = format!(
-        "{}{}.desktop",
-        Path::new(&path).display(),
-        args.name.replace(" ", "-")
-    );
+    let file_path = format!("{}{}.desktop", path, args.name.replace(" ", "-"));
 
     if !args.yes_all {
         let mut file = File::create(&file_path).unwrap();
