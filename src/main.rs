@@ -4,7 +4,7 @@ use std::{
     io::{Write, stdin},
     process::exit,
 };
-
+/// TODO: add comments for -h/--help
 const DEFAULT_NAME: &str = "app";
 const DEFAULT_EXECUTABLE: &str = "";
 const DEFAULT_TYPE: &str = "Application";
